@@ -1,0 +1,259 @@
+/* Copyright (c) 2021 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp(name="Ezra_op", group="Linear OpMode")
+public class  Ezra_op extends LinearOpMode {
+
+    // Declare OpMode members for each of the 4 motors.
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
+    private DcMotor fintake = null; //Arm is a extra motor
+    private DcMotor leftext = null;
+    private DcMotor rightext = null;
+    private DcMotor Spindex = null;
+    private Servo pusher = null;
+    private CRServo sintake = null;
+
+    public static final double MAX_POSITION = 6000, MIN_POSITION = 0;
+    private Hardware hardware;
+
+    @Override
+    public void runOpMode() {
+        //GEEEEEE
+        // Initialize the hardware variables. Note that the strings used here must correspond
+        // to the names assigned during the robot configuration step on the DS or RC devices.
+        hardware = new Hardware(hardwareMap);
+        fintake = hardwareMap.get(DcMotor.class, "FINT"); //Arm is a extra motor
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "FL");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "BL");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+        leftext = hardwareMap.get(DcMotor.class, "LEXT");
+        rightext = hardwareMap.get(DcMotor.class, "REXT");
+        Spindex = hardwareMap.get(DcMotor.class, "SPIN");
+        pusher = hardwareMap.get(Servo.class, "PUSH");
+        sintake = hardwareMap.get(CRServo.class, "SINT");
+        //claw = hardwareMap.get(Servo.class, "CLAW");
+
+
+
+        pusher.scaleRange(0.2, 0.6);
+        //elbow_Left.scaleRange(0,0.25);  servo programs
+
+        // Wait for the game to start (driver presses PLAY)
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        waitForStart();
+        runtime.reset();
+
+        boolean slowMode = false;
+        //boolean armSlowMode = false;
+        boolean slock = true;
+        //boolean clawpos = false;
+        boolean intakeToggle = false;
+        double shotpower = 0.0;
+
+
+        while (opModeIsActive()) {
+
+
+            // run until the end of the match (driver presses STOP)
+            //while (opModeIsActive()) {
+
+            double max;
+
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x; //changed for specific robot was a - but now +
+
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
+            //double armPower = gamepad2.left_stick_y;
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
+// oo
+            if (gamepad1.left_bumper) {
+                slowMode = !slowMode;
+                hardware.ezzysleep(25);
+            }
+            /*if (gamepad2.right_bumper)
+                armSlowMode = !armSlowMode;
+
+             */
+            if (gamepad1.x) //THIS IS A SQUARE
+            {
+                intakeToggle = !intakeToggle;
+                hardware.ezzysleep(25);
+            }
+            if(intakeToggle){
+                hardware.setFintakePower(1);
+                hardware.setSintakePower(1);
+            }
+            else{
+                hardware.setFintakePower(0);
+                hardware.setSintakePower(0);
+            }
+
+
+            //temp until camera
+            /*
+            if(gamepad2.right_stick_y >= 0.1){
+                hardware.setLeftextPower(gamepad2.right_stick_y*.6);
+                hardware.setRightextPower(gamepad2.right_stick_y*.6);
+            }
+            if(gamepad2.right_stick_y < 0.1){
+                hardware.setLeftextPower(0);
+                hardware.setRightextPower(0);
+            }
+            */
+
+
+            if(gamepad2.dpad_up){
+                shotpower = hardware.dpadsleepP(shotpower);
+            }
+            if(gamepad2.dpad_down){
+                shotpower =hardware.dpadsleepM(shotpower);
+            }
+            hardware.setLeftextPower(shotpower);
+            hardware.setRightextPower(shotpower);
+
+            if(gamepad2.right_trigger > 0.2){
+                hardware.setSpindexpower(gamepad2.right_trigger);
+            }
+            else{
+                hardware.setSpindexpower(0);
+            }
+            if(gamepad2.triangle){
+                hardware.setPushposition(1);
+                hardware.ezzysleep(1000);
+                hardware.setPushposition(0);
+            }
+
+
+            /*if (gamepad2.square) {
+                if (clawpos == false) {
+                    claw.setPosition(1);
+                    sleep(200);
+                    clawpos = true;
+                }
+                else if (clawpos == true) {
+                    claw.setPosition(0);
+                    sleep(200);
+                    clawpos = false;
+                }
+            */
+
+
+
+            // Send calculated power to wheels
+            double []powers = {leftFrontPower, leftBackPower, rightBackPower, rightFrontPower};
+            if (slowMode)
+                hardware.setMotorSlowMode(powers);
+            else
+                hardware.setMotorPowers(powers);
+
+            /*if (arm.getPower() > 0 && arm.getCurrentPosition() > MAX_POSITION) {
+                arm.setPower(0);
+            } else if (arm.getPower() < 0 && arm.getCurrentPosition() < MIN_POSITION) {
+                arm.setPower(0);
+            }
+
+             */
+
+           /* if (arm.getPower() < 0.1 || arm.getPower() > -0.1 && slock == true){
+                arm.setTargetPosition(arm.getCurrentPosition());
+            }
+
+            */
+
+            if (gamepad1.dpad_left){
+                hardware.turnLeft(45,1);
+            }
+            else if (gamepad1.dpad_right){
+                hardware.turnRight(45,1);
+            }
+
+           /* if (armSlowMode)
+                hardware.setArmsSlowMode(armPower);
+            else
+                hardware.setArmPower(armPower);
+
+            */
+
+            if (gamepad2.left_bumper && slock == false)
+                slock = true;
+            else if (gamepad2.left_bumper && slock == true) {
+                slock = false;
+                sleep(1000);
+                slock = true;
+            }
+
+
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("rext power",rightext.getPower());
+            telemetry.addData("lext power",leftext.getPower());
+            telemetry.addData("Slow Mode",slowMode);
+            telemetry.addData("fintake",intakeToggle);
+            telemetry.addData("fintake p",fintake.getPower());
+           // telemetry.addData("jit ", claw.getPosition());
+            telemetry.update();
+        }
+    }
+}
