@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RESET_ENCODERS;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,6 +47,9 @@ public class Hardware {
         //private Servo claw;
         private IMU imu;
 
+        private Limelight3A limelight;
+
+        private double distance;
 
         private double yawChangeAmt = 10;
         private double imuangle;
@@ -60,7 +68,7 @@ public class Hardware {
             spindex = hardwareMap.get(DcMotor.class, "SPIN");
             pusher = hardwareMap.get(Servo.class, "PUSH");
             sintake = hardwareMap.get(CRServo.class, "SINT");
-            //LimeLight3A = hardwareMap.get(DcMotor.class, "LimeLight3A");
+            limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
             // claw  = hardwareMap.get(Servo.class, "CLAW");
             imu =  hardwareMap.get(IMU.class, "imu");
 
@@ -75,7 +83,7 @@ public class Hardware {
             leftext.setDirection(DcMotor.Direction.REVERSE);
             rightext.setDirection(DcMotor.Direction.FORWARD);
             spindex.setDirection(DcMotor.Direction.REVERSE);
-            sintake.setDirection(DcMotorSimple.Direction.REVERSE);
+            sintake.setDirection(DcMotorSimple.Direction.FORWARD);
             RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
             RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
@@ -122,6 +130,16 @@ public class Hardware {
     {
         spindex.setPower(power);
     }
+        public void setSpindexposition(int position){
+            spindex.setMode(RUN_USING_ENCODER);
+            spindex.setMode(STOP_AND_RESET_ENCODER);
+            spindex.setPower(0.4);
+            spindex.setTargetPosition(position);
+            spindex.setMode(RUN_TO_POSITION);
+            spindex.setPower(0.4);
+            spindex.setMode(RUN_WITHOUT_ENCODER);
+
+    }
 
         /*public void setClawposition(double power){claw.setPosition(power);}
         public double getClawposition() { return claw.getPosition(); }
@@ -136,6 +154,14 @@ public class Hardware {
             leftext.setPower(5.3*distance - 302);
             rightext.setPower(5.3*distance - 302);
         }
+
+        public double distanceCalc(double target)
+        {
+             double scale = 30665.95/2.54; //converting it to inches from centimeters
+             double distance = (scale/target);
+             return distance;
+        }
+
         public void setMotorPowers(double... powers)
         {
             leftFrontDrive.setPower(powers[0]);
@@ -292,6 +318,11 @@ public class Hardware {
 
     }
 
+    public void spindexAuto(double power, long milliseconds) throws java.lang.InterruptedException{
+        spindex.setPower(power);
+        Thread.sleep(milliseconds);
+        spindex.setPower(power);
+    }
     /*public void armAuto(double power, long milliseconds) throws java.lang.InterruptedException{
             setArmPower(power);
             Thread.sleep(milliseconds);

@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -48,12 +50,16 @@ public class  Ezra_op extends LinearOpMode {
     private DcMotor fintake = null; //Arm is a extra motor
     private DcMotor leftext = null;
     private DcMotor rightext = null;
-    private DcMotor Spindex = null;
+    private DcMotor spindex = null;
     private Servo pusher = null;
     private CRServo sintake = null;
 
     public static final double MAX_POSITION = 6000, MIN_POSITION = 0;
     private Hardware hardware;
+
+    private Limelight3A limelight;
+
+    private double distance;
 
     @Override
     public void runOpMode() {
@@ -68,21 +74,24 @@ public class  Ezra_op extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
         leftext = hardwareMap.get(DcMotor.class, "LEXT");
         rightext = hardwareMap.get(DcMotor.class, "REXT");
-        Spindex = hardwareMap.get(DcMotor.class, "SPIN");
+        spindex = hardwareMap.get(DcMotor.class, "SPIN");
         pusher = hardwareMap.get(Servo.class, "PUSH");
         sintake = hardwareMap.get(CRServo.class, "SINT");
+        limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
         //claw = hardwareMap.get(Servo.class, "CLAW");
 
 
 
-        pusher.scaleRange(0.2, 0.6);
+
         //elbow_Left.scaleRange(0,0.25);  servo programs
+
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
         runtime.reset();
+        limelight.start();
 
         boolean slowMode = false;
         //boolean armSlowMode = false;
@@ -90,7 +99,8 @@ public class  Ezra_op extends LinearOpMode {
         //boolean clawpos = false;
         boolean intakeToggle = false;
         double shotpower = 0.0;
-
+        double ticks = 2786.2;
+        int counter =0;
 
         while (opModeIsActive()) {
 
@@ -178,8 +188,13 @@ public class  Ezra_op extends LinearOpMode {
             }
             if(gamepad2.triangle){
                 hardware.setPushposition(1);
-                hardware.ezzysleep(1000);
+                hardware.ezzysleep(100);
                 hardware.setPushposition(0);
+                counter++;
+            }
+            if(gamepad2.circle){
+               hardware.setSpindexposition((int)ticks);
+               hardware.ezzysleep(60);
             }
 
 
@@ -233,15 +248,28 @@ public class  Ezra_op extends LinearOpMode {
 
             */
 
-            if (gamepad2.left_bumper && slock == false)
+            /*if (gamepad2.left_bumper && slock == false)
                 slock = true;
             else if (gamepad2.left_bumper && slock == true) {
                 slock = false;
                 sleep(1000);
                 slock = true;
+            }*/
+
+            LLResult llResult = limelight.getLatestResult();
+            if (llResult != null & llResult.isValid()) // this is really important because if the limelight doesn't see anything the code WILL break down
+            {
+                distance = hardware.distanceCalc(llResult.getTa());
+                telemetry.addData("distance: ", distance);
+                telemetry.update();
+                if(gamepad2.right_trigger > 0.2){
+                    hardware.aimbot(distance);
+                }
+                else{
+                    hardware.setLeftextPower(0);
+                    hardware.setRightextPower(0);
+                }
             }
-
-
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -252,6 +280,8 @@ public class  Ezra_op extends LinearOpMode {
             telemetry.addData("Slow Mode",slowMode);
             telemetry.addData("fintake",intakeToggle);
             telemetry.addData("fintake p",fintake.getPower());
+            telemetry.addData("spidexer pos",spindex.getCurrentPosition());
+            telemetry.addData("triangles",counter);
            // telemetry.addData("jit ", claw.getPosition());
             telemetry.update();
         }
