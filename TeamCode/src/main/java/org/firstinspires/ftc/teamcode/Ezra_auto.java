@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,11 +18,17 @@ public class Ezra_auto extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor arm = null; //Arm is a extra motor
-    private Servo claw;
-    private Servo pusher;
-    private Servo wrist;
-    private Servo bucket;
+    private DcMotor fintake = null; //Arm is a extra motor
+    private DcMotor leftext = null;
+    private DcMotor rightext = null;
+    private DcMotor spindex = null;
+    private Servo pusher = null;
+    private CRServo sintake = null;
+    private Limelight3A limelight;
+    private double distance;
+    public static final double MAX_POSITION = 6000, MIN_POSITION = 0;
+    private Hardware hardware;
+
     private IMU imu;
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -39,18 +47,19 @@ public class Ezra_auto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        Hardware hardware = new Hardware(hardwareMap);
-        arm = hardwareMap.get(DcMotor.class, "ARM"); //Arm is a extra motor
+        hardware = new Hardware(hardwareMap);
+        fintake = hardwareMap.get(DcMotor.class, "FINT"); //Arm is a extra motor
         leftFrontDrive = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive = hardwareMap.get(DcMotor.class, "BL");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
-        claw = hardwareMap.get(Servo.class, "CLAW");
+        leftext = hardwareMap.get(DcMotor.class, "LEXT");
+        rightext = hardwareMap.get(DcMotor.class, "REXT");
+        spindex = hardwareMap.get(DcMotor.class, "SPIN");
         pusher = hardwareMap.get(Servo.class, "PUSH");
-        wrist  = hardwareMap.get(Servo.class, "WRIST");
-        bucket = hardwareMap.get(Servo.class, "BUCK");
+        sintake = hardwareMap.get(CRServo.class, "SINT");
+        limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
+
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -62,7 +71,8 @@ public class Ezra_auto extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // THIS IS WHERE HTE STUFF HAPPENS
-        hardware.strafeRight(2,.5);
+        hardware.smoothDriveForward(1,0.4);
+
         //encoderDrive(DRIVE_SPEED ,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout

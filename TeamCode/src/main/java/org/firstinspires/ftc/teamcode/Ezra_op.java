@@ -146,7 +146,7 @@ public class  Ezra_op extends LinearOpMode {
             if (gamepad1.x) //THIS IS A SQUARE
             {
                 intakeToggle = !intakeToggle;
-                hardware.ezzysleep(25);
+                hardware.ezzysleep(100);
             }
             if(intakeToggle){
                 hardware.setFintakePower(1);
@@ -260,8 +260,7 @@ public class  Ezra_op extends LinearOpMode {
             if (llResult != null & llResult.isValid()) // this is really important because if the limelight doesn't see anything the code WILL break down
             {
                 distance = hardware.distanceCalc(llResult.getTa());
-                telemetry.addData("distance: ", distance);
-                telemetry.update();
+
                 if(gamepad2.right_trigger > 0.2){
                     hardware.aimbot(distance);
                 }
@@ -282,6 +281,7 @@ public class  Ezra_op extends LinearOpMode {
             telemetry.addData("fintake p",fintake.getPower());
             telemetry.addData("spidexer pos",spindex.getCurrentPosition());
             telemetry.addData("triangles",counter);
+            telemetry.addData("distance: ", distance);
            // telemetry.addData("jit ", claw.getPosition());
             telemetry.update();
         }
