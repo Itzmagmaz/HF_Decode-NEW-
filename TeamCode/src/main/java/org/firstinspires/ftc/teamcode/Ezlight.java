@@ -23,7 +23,7 @@ public class Ezlight extends OpMode {
     @Override
     public void init() {
         try {
-            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
             limelight.pipelineSwitch(0);
             telemetry.addData("Status", "Limelight Found!");
         } catch (Exception e) {
