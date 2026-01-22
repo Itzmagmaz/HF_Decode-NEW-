@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Ezlight Test")
+@TeleOp
 public class Ezlight extends OpMode {
 
     private Limelight3A limelight;
@@ -23,18 +23,14 @@ public class Ezlight extends OpMode {
     @Override
     public void init() {
         try {
+            limelight.start();
             limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
+
             limelight.pipelineSwitch(0);
-            telemetry.addData("Status", "Limelight Found!");
+
+            telemetry.addData("Status", "Limelight initialized");
         } catch (Exception e) {
             telemetry.addData("Status", "ERROR: Limelight not found in Config");
-        }
-    }
-
-    @Override
-    public void start() {
-        if (limelight != null) {
-            limelight.start();
         }
     }
 
@@ -50,14 +46,7 @@ public class Ezlight extends OpMode {
 
         if (result != null && result.isValid()) {
             double tx = result.getTx(); // This is your Angle Theta
-            double ty = result.getTy();
-
-            double angleToTargetDegree = MOUNT_ANGLE + ty;
-            double angleToTargetRadians = Math.toRadians(angleToTargetDegree);
-            double distanceInInches = (TARGET_HEIGHT - CAMERA_HEIGHT) / Math.tan(angleToTargetRadians);
-
             telemetry.addData("Theta (Horizontal)", tx);
-            telemetry.addData("Distance", Math.abs(distanceInInches));
         } else {
             telemetry.addData("Status", "No Target Detected");
         }

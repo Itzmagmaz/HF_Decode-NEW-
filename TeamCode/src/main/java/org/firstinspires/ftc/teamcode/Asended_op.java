@@ -172,11 +172,16 @@ public class Asended_op extends OpMode {
         }
 
         if(gamepad2.right_trigger > 0.2){
-            hardware.setSpindexpower(gamepad2.right_trigger);
+            hardware.setSpindexpower(gamepad2.right_trigger/4);
+        }
+        if(gamepad2.left_trigger > 0.2){
+            hardware.setSpindexpower(-(gamepad2.left_trigger/4));
         }
         else{
             hardware.setSpindexpower(0);
         }
+
+
 
 
     }

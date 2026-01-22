@@ -99,7 +99,7 @@ public class  Ezra_op extends LinearOpMode {
         //boolean clawpos = false;
         boolean intakeToggle = false;
         double shotpower = 0.0;
-        double ticks = 2786.2;
+        double ticks = 537.6;
         int counter =0;
 
         while (opModeIsActive()) {
@@ -197,7 +197,8 @@ public class  Ezra_op extends LinearOpMode {
             }
             if(gamepad2.circle){
                hardware.setSpindexposition((int)ticks);
-               hardware.ezzysleep(60);
+               hardware.setSpindexposition(0);
+               hardware.ezzysleep(400);
             }
 
 
