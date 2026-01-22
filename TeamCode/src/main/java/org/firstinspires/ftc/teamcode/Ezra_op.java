@@ -99,7 +99,7 @@ public class  Ezra_op extends LinearOpMode {
         //boolean clawpos = false;
         boolean intakeToggle = false;
         double shotpower = 0.0;
-        double ticks = 537.6;
+        double ticks = 2786.2;
         int counter =0;
 
         while (opModeIsActive()) {
@@ -181,10 +181,7 @@ public class  Ezra_op extends LinearOpMode {
             hardware.setRightextPower(shotpower);
 
             if(gamepad2.right_trigger > 0.2){
-                hardware.setSpindexpower(gamepad2.right_trigger/4);
-            }
-            if(gamepad2.left_trigger > 0.2){
-                hardware.setSpindexpower(-(gamepad2.left_trigger/4));
+                hardware.setSpindexpower(gamepad2.right_trigger);
             }
             else{
                 hardware.setSpindexpower(0);
@@ -197,8 +194,7 @@ public class  Ezra_op extends LinearOpMode {
             }
             if(gamepad2.circle){
                hardware.setSpindexposition((int)ticks);
-               hardware.setSpindexposition(0);
-               hardware.ezzysleep(400);
+               hardware.ezzysleep(60);
             }
 
 
@@ -285,7 +281,6 @@ public class  Ezra_op extends LinearOpMode {
             telemetry.addData("fintake p",fintake.getPower());
             telemetry.addData("spidexer pos",spindex.getCurrentPosition());
             telemetry.addData("triangles",counter);
-            telemetry.addData("distance: ", llResult.getTa());
             telemetry.addData("distance: ", distance);
            // telemetry.addData("jit ", claw.getPosition());
             telemetry.update();
