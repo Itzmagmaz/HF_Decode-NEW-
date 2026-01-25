@@ -192,6 +192,7 @@ public class Advanced_op extends OpMode {
         telemetry.addData("Shooter", shooterMode);
         telemetry.addData("IntakeOn", intakeOn);
         telemetry.addData("SlowModeOn", slowModeOn);
+        telemetry.addData("TurretPos", altHardware.getTurretPosition());
         telemetry.update();
     }
 
