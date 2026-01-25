@@ -31,6 +31,11 @@ public class Advanced_op extends OpMode {
     private ShooterMode shooterMode = ShooterMode.OFF;
     private boolean prevCircle = false;
     private boolean prevTriangle = false;
+    private boolean prevSquare = false;
+    private boolean prevSlowMode = false;
+    private boolean intakeOn = false;
+    private boolean slowModeOn = false;
+
 
 
     //need to add Odementry here
@@ -100,19 +105,57 @@ public class Advanced_op extends OpMode {
         //controller buttons
         boolean circle = gamepad2.circle;
         boolean triangle = gamepad2.triangle;
+        boolean square = gamepad1.square; // intake toggle button
+        boolean slowBtn = gamepad1.right_bumper; // slow mode toggle button
 
-        boolean circlePressed = circle && !prevCircle;
+        boolean circlePressed = circle && !prevCircle; // this is for the Rising edge technique
         boolean trianglePressed = triangle && !prevTriangle;
+        boolean squarePressed = square && !prevSquare;
+        boolean slowPressed = slowBtn && !prevSlowMode;
 //if statments
-        if (circlePressed) {
+        if (circlePressed)
+        {
             shooterMode = (shooterMode == ShooterMode.SOFT) ? ShooterMode.OFF : ShooterMode.SOFT;
         }
-        if (trianglePressed) {
+        if (trianglePressed)
+        {
             shooterMode = (shooterMode == ShooterMode.HARD) ? ShooterMode.OFF : ShooterMode.HARD;
         }
+// intake toggle
+        if (squarePressed) {
+            intakeOn = !intakeOn;
+        }
+        altHardware.setIntakePower(intakeOn ? 1.0 : 0.0);
+        if(gamepad2.left_bumper){
+            altHardware.setTurretPosition(0);
+        }
+        if(gamepad2.right_bumper){
+            altHardware.setTurretPosition(1);
+        }
+        if(gamepad2.left_trigger > 0.2 && 0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1){
+            altHardware.setTurretPosition(altHardware.getTurretPosition()+0.05);
+            //maybe add a sleep here?
+        }
+        if(gamepad2.right_trigger > 0.2 &&0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1) //this might break idk
+             {
+            altHardware.setTurretPosition(altHardware.getTurretPosition()-0.05);
+            //maybe add a sleep here?
+        }
+
+// slow mode toggle
+        if (slowPressed) {
+            slowModeOn = !slowModeOn;
+        }
+
+        double[] powers = {leftFrontPower, leftBackPower, rightBackPower, rightFrontPower};
+        if (slowModeOn) altHardware.setMotorSlowMode(powers);
+        else            altHardware.setMotorPowers(powers);
+
         //post if statments
         prevCircle = circle;
         prevTriangle = triangle;
+        prevSquare = square;
+        prevSlowMode = slowBtn;
 
         // Always set power every loop (include OFF case!)
         switch (shooterMode) {
@@ -139,12 +182,17 @@ public class Advanced_op extends OpMode {
                 hardware.aimbot(distance);
             }
             else{
-                hardware.setLeftextPower(0);
-                hardware.setRightextPower(0);
+            altHardware.setShooterPower(0);
             }
         }
 
         */
+
+
+        telemetry.addData("Shooter", shooterMode);
+        telemetry.addData("IntakeOn", intakeOn);
+        telemetry.addData("SlowModeOn", slowModeOn);
+        telemetry.update();
     }
 
 }
