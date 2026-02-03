@@ -22,9 +22,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import java.util.ArrayList;
+
 
 public class Hardware {
-        // Declare OpMode members for each of the 4 motors.
+    public static Object setMotorsPower;
+    // Declare OpMode members for each of the 4 motors.
     // public static final double ticks_per_tile = 23 / (96 / 25.4) * 384.5;
     static int ticks_per_tile = 620; // constant for strafe methods
     static double strafe_constant = 1.3;
@@ -56,6 +59,9 @@ public class Hardware {
 
         private DcMotor FL, BL, BR, FR;
         public static final double SLOW_RATE = 0.3;
+
+       // String[] loadedBalls = {};
+
 
         public Hardware(HardwareMap hardwareMap) {
             FL = leftFrontDrive = hardwareMap.get(DcMotor.class, "FL");
@@ -157,7 +163,7 @@ public class Hardware {
 
         public double distanceCalc(double target)
         {
-             double scale = 30665.95/2.54; //converting it to inches from centimeters
+             double scale = 30665.95; //this code probably needs some messing around so it can work properly for the already existing aimbot method
              double distance = (scale/target);
              return distance;
         }
@@ -493,6 +499,25 @@ public class Hardware {
         }
         setMotorPower(0,0,0,0);
         setMotorModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void loadBall(String color) {
+
+        /*loadedBalls[2] = loadedBalls[1];
+        loadedBalls[1] = loadedBalls[0];
+        loadedBalls[0] = color;*/
+
+    }
+
+    public void rotateShooter(String color) {
+       // int i = 0;
+        //while (loadedBalls[i] != color) {
+          //  setSpindexposition(1);
+        //    i++;
+        //if (i > 2) {
+        //  i = 0;
+        // }
+        //}
     }
 
     public void resetMotorEncoders() {

@@ -61,6 +61,8 @@ public class  Ezra_op extends LinearOpMode {
 
     private double distance;
 
+    private String ballColor;
+
     @Override
     public void runOpMode() {
         //GEEEEEE
@@ -99,7 +101,7 @@ public class  Ezra_op extends LinearOpMode {
         //boolean clawpos = false;
         boolean intakeToggle = false;
         double shotpower = 0.0;
-        double ticks = 2786.2;
+        double ticks = 570; // old number was 2786.2
         int counter =0;
 
         while (opModeIsActive()) {
@@ -180,13 +182,19 @@ public class  Ezra_op extends LinearOpMode {
             hardware.setLeftextPower(shotpower);
             hardware.setRightextPower(shotpower);
 
-            if(gamepad2.right_trigger > 0.2){
-                hardware.setSpindexpower(gamepad2.right_trigger);
+            if(gamepad2.right_trigger > 0.2) {
+                hardware.setSpindexpower(gamepad2.right_trigger * .5);
+            }
+            else if(gamepad2.left_trigger > 0.2){
+                hardware.setSpindexpower(gamepad2.left_trigger * -.1);
+            }
+            else if(gamepad2.right_bumper){
+                hardware.setSpindexpower(.05);
             }
             else{
                 hardware.setSpindexpower(0);
             }
-            if(gamepad2.triangle){
+           if(gamepad2.left_bumper){
                 hardware.setPushposition(1);
                 hardware.ezzysleep(100);
                 hardware.setPushposition(0);
@@ -196,6 +204,23 @@ public class  Ezra_op extends LinearOpMode {
                hardware.setSpindexposition((int)ticks);
                hardware.ezzysleep(60);
             }
+
+          /*  if (gamepad2.square) {
+                hardware.loadBall("purple");
+            }
+
+            if (gamepad2.triangle) {
+               // hardware.loadBall("green");
+            }
+
+
+            if (gamepad2.x) {
+               //hardware.rotateShooter("purple"); //shoot purple yay
+            }
+
+            if (gamepad2.circle) {
+                // shoot green yay
+            }/*
 
 
             /*if (gamepad2.square) {

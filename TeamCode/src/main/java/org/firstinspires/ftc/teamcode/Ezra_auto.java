@@ -77,11 +77,42 @@ public class Ezra_auto extends LinearOpMode {
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         while (opModeIsActive()) {
-
+            hardware.setMotorPowers(.5, .5, .5, .5);
         }
     }
 }
-        /*
+/*
+Kellen's auto idea:
+public void runAutoMode(){
+    Hardware.setMotorsPower();
+    hardware.turnLeft(45);
+    hardware.setMotorsPower();
+    hardware.turnLeft(180);
+    shoot
+    revolve spindex
+    shoot
+    revolve spindex
+    shoot
+    hardware.turnLeft(45);
+    hardware.setMotorsPower();
+    fintake & sintake on
+    revolve spindex
+    revolve spindex
+    revolve spindex
+    fintake & sintake off
+    hardware.setMotorsPower(-);
+    hardware.turnRight(45);
+    shoot
+    revolve spindex
+    shoot
+    revolve spindex
+    shoot
+    hardware.turnRight(45);
+    hardware.setMotorsPower(-);
+    strafe left
+ }
+*/
+/*
         hardware.smoothDriveForward(1,1);
 /*
 //
