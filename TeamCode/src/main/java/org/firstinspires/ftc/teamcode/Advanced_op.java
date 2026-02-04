@@ -25,6 +25,7 @@ public class Advanced_op extends OpMode {
     private DcMotor intake = null; // intakes balls
     private DcMotor kick = null; // Will lift the robot up
     private Servo turret = null; // controls rotation of the turret, 1150 rpm
+    private Servo gate = null;
     private IMU imu = null; //Might break from use
     private AltHardware altHardware;
     private enum ShooterMode { OFF, SOFT, HARD }
@@ -32,6 +33,7 @@ public class Advanced_op extends OpMode {
     private boolean prevCircle = false;
     private boolean prevTriangle = false;
     private boolean prevSquare = false;
+    private boolean prevx = false;
     private boolean prevSlowMode = false;
     private boolean intakeOn = false;
     private boolean slowModeOn = false;
@@ -54,8 +56,9 @@ public class Advanced_op extends OpMode {
         shooter1 = hardwareMap.get(DcMotor.class, "S1");
         shooter2 = hardwareMap.get(DcMotor.class, "S2");
         kick = hardwareMap.get(DcMotor.class, "KICK");
-        turret = hardwareMap.get(Servo.class, "TRT");;
-        limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
+        turret = hardwareMap.get(Servo.class, "TRT");
+        gate = hardwareMap.get(Servo.class, "GATE");
+        //limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
         imu =  hardwareMap.get(IMU.class, "imu");
 
 
@@ -69,7 +72,7 @@ public class Advanced_op extends OpMode {
         telemetry.update();
         //waitForStart(); probably redundant now with this new start()
         runtime.reset();
-        limelight.start();
+        //limelight.start();
 
     }
 
@@ -106,11 +109,13 @@ public class Advanced_op extends OpMode {
         boolean circle = gamepad2.circle;
         boolean triangle = gamepad2.triangle;
         boolean square = gamepad1.square; // intake toggle button
+        boolean xbutton = gamepad2.a;
         boolean slowBtn = gamepad1.right_bumper; // slow mode toggle button
 
         boolean circlePressed = circle && !prevCircle; // this is for the Rising edge technique
         boolean trianglePressed = triangle && !prevTriangle;
         boolean squarePressed = square && !prevSquare;
+        boolean xPressed = xbutton && !prevx;
         boolean slowPressed = slowBtn && !prevSlowMode;
 //if statments
         if (circlePressed)
@@ -141,6 +146,14 @@ public class Advanced_op extends OpMode {
             altHardware.setTurretPosition(altHardware.getTurretPosition()-0.05);
             //maybe add a sleep here?
         }
+        if(xPressed){
+            if(altHardware.getGatePosition() > 0.5){
+                altHardware.setGatePosition(0);
+            }
+            else{
+                altHardware.setGatePosition(1);
+            }
+        }
 
 // slow mode toggle
         if (slowPressed) {
@@ -155,6 +168,7 @@ public class Advanced_op extends OpMode {
         prevCircle = circle;
         prevTriangle = triangle;
         prevSquare = square;
+        prevx = xbutton;
         prevSlowMode = slowBtn;
 
         // Always set power every loop (include OFF case!)

@@ -38,6 +38,7 @@ public class AltHardware {
     private DcMotor intake = null; // intakes balls
     private DcMotor kick = null; // Will lift the robot up
     private Servo turret = null; // controls rotation of the turret, 1150 rpm
+    private Servo gate = null;
     private IMU imu = null; //Might break from use
 
     public static final double SLOW_RATE = 0.3;
@@ -55,14 +56,15 @@ public class AltHardware {
         shooter1 = hardwareMap.get(DcMotor.class, "S1");
         shooter2 = hardwareMap.get(DcMotor.class, "S2");
         kick = hardwareMap.get(DcMotor.class, "KICK");
-        turret = hardwareMap.get(Servo.class, "TRT");;
-        limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
+        turret = hardwareMap.get(Servo.class, "TRT");
+        gate = hardwareMap.get(Servo.class, "GATE");
+        //limelight = hardwareMap.get(Limelight3A.class, "LimeLight3A");
         imu =  hardwareMap.get(IMU.class, "imu");
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.FORWARD);
         shooter1.setDirection(DcMotor.Direction.FORWARD);
         shooter2.setDirection(DcMotor.Direction.FORWARD);
@@ -135,6 +137,9 @@ public class AltHardware {
     public void setTurretPosition(double power){
         turret.setPosition(power);
     }
+    public void setGatePosition(double power){
+        gate.setPosition(power);
+    }
 
     //collection of random getters
     public double getShooterPower(){
@@ -149,6 +154,7 @@ public class AltHardware {
     public double getTurretPosition(){
         return turret.getPosition();
     }
+    public double getGatePosition(){return gate.getPosition();}
 
     public double getYaw() { // some imu function
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();

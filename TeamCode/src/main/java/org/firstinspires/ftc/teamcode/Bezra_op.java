@@ -38,8 +38,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Ezra_op", group="Linear OpMode")
-public class  Ezra_op extends LinearOpMode {
+@TeleOp(name="bezra_op", group="Linear OpMode")
+public class Bezra_op extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -53,7 +53,6 @@ public class  Ezra_op extends LinearOpMode {
     private DcMotor spindex = null;
     private Servo pusher = null;
     private CRServo sintake = null;
-
     public static final double MAX_POSITION = 6000, MIN_POSITION = 0;
     private Hardware hardware;
 
@@ -65,6 +64,7 @@ public class  Ezra_op extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        boolean circle = gamepad1.circle;
         //GEEEEEE
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -103,7 +103,7 @@ public class  Ezra_op extends LinearOpMode {
         double shotpower = 0.0;
         double ticks = 570; // old number was 2786.2
         int counter =0;
-
+        boolean prevCircle = false;
         while (opModeIsActive()) {
 
 
@@ -150,11 +150,10 @@ public class  Ezra_op extends LinearOpMode {
                 intakeToggle = !intakeToggle;
                 hardware.ezzysleep(100);
             }
-            if(intakeToggle){
+            if (intakeToggle) {
                 hardware.setFintakePower(1);
                 hardware.setSintakePower(1);
-            }
-            else{
+            } else {
                 hardware.setFintakePower(0);
                 hardware.setSintakePower(0);
             }
@@ -173,37 +172,42 @@ public class  Ezra_op extends LinearOpMode {
             */
 
 
-            if(gamepad2.dpad_up){
+            if (gamepad2.dpad_up) {
                 shotpower = hardware.dpadsleepP(shotpower);
             }
-            if(gamepad2.dpad_down){
-                shotpower =hardware.dpadsleepM(shotpower);
+            if (gamepad2.dpad_down) {
+                shotpower = hardware.dpadsleepM(shotpower);
             }
             hardware.setLeftextPower(shotpower);
             hardware.setRightextPower(shotpower);
 
-            if(gamepad2.right_trigger > 0.2) {
+            if (gamepad2.right_trigger > 0.2) {
                 hardware.setSpindexpower(gamepad2.right_trigger);
             }
-            if(gamepad2.left_trigger > 0.2){
+            if (gamepad2.left_trigger > 0.2) {
                 hardware.setSpindexpower(gamepad2.left_trigger * -.1);
             }
-            if(gamepad2.left_trigger > 0.2){
+            if (gamepad2.left_trigger > 0.2) {
                 hardware.setSpindexpower(gamepad2.left_trigger * -.1);
-            }
-            else{
+            } else {
                 hardware.setSpindexpower(0);
             }
-           if(gamepad2.left_bumper){
+            if (gamepad2.left_bumper) {
                 hardware.setPushposition(1);
                 hardware.ezzysleep(100);
                 hardware.setPushposition(0);
                 counter++;
             }
-            if(gamepad2.circle){
-               hardware.setSpindexposition((int)ticks);
-               hardware.ezzysleep(200);
+            if (circle && !prevCircle) {
+                int current = spindex.getCurrentPosition();
+                spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                spindex.setPower(0.4);
             }
+            if (spindex.getMode() == DcMotor.RunMode.RUN_TO_POSITION && !spindex.isBusy()) {
+                spindex.setPower(0);
+                spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            prevCircle = circle;
 
           /*  if (gamepad2.square) {
                 hardware.loadBall("purple");
@@ -237,9 +241,8 @@ public class  Ezra_op extends LinearOpMode {
             */
 
 
-
             // Send calculated power to wheels
-            double []powers = {leftFrontPower, leftBackPower, rightBackPower, rightFrontPower};
+            double[] powers = {leftFrontPower, leftBackPower, rightBackPower, rightFrontPower};
             if (slowMode)
                 hardware.setMotorSlowMode(powers);
             else
@@ -259,11 +262,10 @@ public class  Ezra_op extends LinearOpMode {
 
             */
 
-            if (gamepad1.dpad_left){
-                hardware.turnLeft(45,1);
-            }
-            else if (gamepad1.dpad_right){
-                hardware.turnRight(45,1);
+            if (gamepad1.dpad_left) {
+                hardware.turnLeft(45, 1);
+            } else if (gamepad1.dpad_right) {
+                hardware.turnRight(45, 1);
             }
 
            /* if (armSlowMode)
@@ -286,10 +288,9 @@ public class  Ezra_op extends LinearOpMode {
             {
                 distance = hardware.distanceCalc(llResult.getTa());
 
-                if(gamepad2.right_trigger > 0.2){
+                if (gamepad2.right_trigger > 0.2) {
                     hardware.aimbot(distance);
-                }
-                else{
+                } else {
                     hardware.setLeftextPower(0);
                     hardware.setRightextPower(0);
                 }
@@ -299,16 +300,12 @@ public class  Ezra_op extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("rext power",rightext.getPower());
-            telemetry.addData("lext power",leftext.getPower());
-            telemetry.addData("Slow Mode",slowMode);
-            telemetry.addData("fintake",intakeToggle);
-            telemetry.addData("fintake p",fintake.getPower());
-            telemetry.addData("spidexer pos",spindex.getCurrentPosition());
-            telemetry.addData("triangles",counter);
-            telemetry.addData("distance: ", distance);
-           // telemetry.addData("jit ", claw.getPosition());
-            telemetry.update();
+            telemetry.addData("rext power", rightext.getPower());
+            telemetry.addData("lext power", leftext.getPower());
+            telemetry.addData("Slow Mode", slowMode);
+            telemetry.addData("fintake", intakeToggle);
+            telemetry.addData("fintake p", fintake.getPower());
+            telemetry.addData("spidexer pos", spindex.getCurrentPosition());
         }
     }
 }
