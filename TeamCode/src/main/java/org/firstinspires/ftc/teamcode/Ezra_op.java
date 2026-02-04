@@ -84,7 +84,6 @@ public class  Ezra_op extends LinearOpMode {
 
 
 
-
         //elbow_Left.scaleRange(0,0.25);  servo programs
 
 

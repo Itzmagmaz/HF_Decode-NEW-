@@ -106,10 +106,10 @@ public class Advanced_op extends OpMode {
             rightBackPower /= max;
         }
         //controller buttons
-        boolean circle = gamepad2.circle;
-        boolean triangle = gamepad2.triangle;
+        boolean circle = gamepad1.circle;
+        boolean triangle = gamepad1.triangle;
         boolean square = gamepad1.square; // intake toggle button
-        boolean xbutton = gamepad2.a;
+        boolean xbutton = gamepad1.a;
         boolean slowBtn = gamepad1.right_bumper; // slow mode toggle button
 
         boolean circlePressed = circle && !prevCircle; // this is for the Rising edge technique
@@ -131,17 +131,17 @@ public class Advanced_op extends OpMode {
             intakeOn = !intakeOn;
         }
         altHardware.setIntakePower(intakeOn ? 1.0 : 0.0);
-        if(gamepad2.left_bumper){
+        if(gamepad1.left_bumper){
             altHardware.setTurretPosition(0);
         }
-        if(gamepad2.right_bumper){
+        if(gamepad1.right_bumper){
             altHardware.setTurretPosition(1);
         }
-        if(gamepad2.left_trigger > 0.2 && 0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1){
+        if(gamepad1.left_trigger > 0.2 && 0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1){
             altHardware.setTurretPosition(altHardware.getTurretPosition()+0.05);
             //maybe add a sleep here?
         }
-        if(gamepad2.right_trigger > 0.2 &&0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1) //this might break idk
+        if(gamepad1.right_trigger > 0.2 &&0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1) //this might break idk
              {
             altHardware.setTurretPosition(altHardware.getTurretPosition()-0.05);
             //maybe add a sleep here?

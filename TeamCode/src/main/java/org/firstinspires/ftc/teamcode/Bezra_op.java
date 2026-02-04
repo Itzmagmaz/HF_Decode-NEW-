@@ -196,12 +196,12 @@ public class Bezra_op extends LinearOpMode {
                 hardware.setPushposition(1);
                 hardware.ezzysleep(100);
                 hardware.setPushposition(0);
-                counter++;
             }
             if (circle && !prevCircle) {
                 int current = spindex.getCurrentPosition();
                 spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 spindex.setPower(0.4);
+                counter++;
             }
             if (spindex.getMode() == DcMotor.RunMode.RUN_TO_POSITION && !spindex.isBusy()) {
                 spindex.setPower(0);
@@ -306,6 +306,12 @@ public class Bezra_op extends LinearOpMode {
             telemetry.addData("fintake", intakeToggle);
             telemetry.addData("fintake p", fintake.getPower());
             telemetry.addData("spidexer pos", spindex.getCurrentPosition());
+            telemetry.addData("circle", circle);
+            telemetry.addData("pcircle", prevCircle);
+            telemetry.addData("counter", counter);
+
+
+
         }
     }
 }
