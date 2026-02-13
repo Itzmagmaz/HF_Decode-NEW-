@@ -73,7 +73,7 @@ public class Advanced_op extends OpMode {
         //waitForStart(); probably redundant now with this new start()
         runtime.reset();
         //limelight.start();
-
+        altHardware.setTurretPosition(.5);
     }
 
     @Override
@@ -131,19 +131,19 @@ public class Advanced_op extends OpMode {
             intakeOn = !intakeOn;
         }
         altHardware.setIntakePower(intakeOn ? 1.0 : 0.0);
-        if(gamepad1.left_bumper){
+        if(gamepad1.left_bumper){ // rough movements
             altHardware.setTurretPosition(0);
         }
         if(gamepad1.right_bumper){
             altHardware.setTurretPosition(1);
         }
         if(gamepad1.left_trigger > 0.2 && 0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1){
-            altHardware.setTurretPosition(altHardware.getTurretPosition()+0.05);
+            altHardware.setTurretPosition(altHardware.getTurretPosition()+0.01);
             //maybe add a sleep here?
         }
         if(gamepad1.right_trigger > 0.2 &&0 <= altHardware.getTurretPosition() && altHardware.getTurretPosition() <= 1) //this might break idk
              {
-            altHardware.setTurretPosition(altHardware.getTurretPosition()-0.05);
+            altHardware.setTurretPosition(altHardware.getTurretPosition()-0.01);
             //maybe add a sleep here?
         }
         if(xPressed){

@@ -65,7 +65,7 @@ public class AltHardware {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.REVERSE);
         shooter1.setDirection(DcMotor.Direction.FORWARD);
         shooter2.setDirection(DcMotor.Direction.FORWARD);
         kick.setDirection(DcMotor.Direction.FORWARD);
