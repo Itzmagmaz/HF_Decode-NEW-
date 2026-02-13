@@ -200,8 +200,7 @@ public class  Ezra_op extends LinearOpMode {
                 counter++;
             }
             if(gamepad2.circle){
-               hardware.setSpindexposition((int)ticks);
-               hardware.ezzysleep(200);
+                hardware.moveSpindexDegrees(60.0, 0.5);
             }
 
           /*  if (gamepad2.square) {

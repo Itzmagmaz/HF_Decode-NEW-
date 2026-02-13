@@ -168,6 +168,24 @@ public class Hardware {
              return distance;
         }
 
+        public void moveSpindexDegrees(double degrees, double power) {
+            double TICKS_PER_REV = 537.7; // change if needed
+            int ticks = (int)((degrees/360) * TICKS_PER_REV);
+
+            spindex.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            spindex.setTargetPosition(ticks);
+            spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            spindex.setPower(power);
+
+            while (spindex.isBusy()) {
+                // wait
+            }
+
+            spindex.setPower(0);
+            spindex.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+
         public void setMotorPowers(double... powers)
         {
             leftFrontDrive.setPower(powers[0]);
