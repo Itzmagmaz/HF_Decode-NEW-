@@ -173,7 +173,7 @@ public class Advanced_op extends OpMode {
 
         // Always set power every loop (include OFF case!)
         switch (shooterMode) {
-            case HARD: altHardware.setShooterPower(0.6); break;
+            case HARD: altHardware.setShooterPower(1); break;
             case SOFT: altHardware.setShooterPower(0.1); break;
             default:   altHardware.setShooterPower(0.0); break;
         }
