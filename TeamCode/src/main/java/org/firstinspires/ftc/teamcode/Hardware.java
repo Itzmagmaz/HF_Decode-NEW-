@@ -169,6 +169,8 @@ public class Hardware {
         }
 
         public void moveSpindexDegrees(double degrees, double power) {
+            if (spindex.isBusy()) {return;}
+
             double TICKS_PER_REV = 537.7; // change if needed
             int ticks = (int)((degrees/360) * TICKS_PER_REV);
 
